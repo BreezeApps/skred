@@ -61,7 +61,7 @@ const BANDS = [[0.03, 0.12], [0.12, 0.25], [0.25, 9]];
 // et le suivi sont refaits avec chaque jeu de réglages (window.skred.rejudge) : mêmes détections pour toutes les variantes.
 const VARIANTS = process.env.VARIANTES ? JSON.parse(process.env.VARIANTES) : { [LABEL]: null };
 const acc = Object.fromEntries(Object.keys(VARIANTS).map((v) => [v, {
-  total: BANDS.map(() => 0), missed: BANDS.map(() => 0), area: 0, off: 0, offBruit: 0, offHalo: 0, n: 0, perClip: {}, detail: [],
+  total: BANDS.map(() => 0), missed: BANDS.map(() => 0), area: 0, carres: 0, off: 0, offBruit: 0, offHalo: 0, n: 0, perClip: {}, detail: [],
   // Relevé par piste (suivi d'un visage) : une piste est « bruit » si, sur les images corrigées où elle apparaît, elle ne
   // touche jamais un visage (zone du visage agrandie de moitié de chaque côté). « 1 analyse » : visage vu une seule fois.
   pistes: { total: 0, bruit: 0, bruit1: 0, visage: 0, visage1: 0, nonVues: 0 },
@@ -137,6 +137,7 @@ for (const clip of clips) {
         if (coverage(f, masks) < 0.7) { A.missed[band]++; cm++; }
       }
       const [a, o, ob, oh] = areas(e, masks, noise);
+      A.carres += masks.length;
       A.area += a; A.off += o; A.offBruit += ob; A.offHalo += oh; A.n++;
       A.detail.push({ image: e.image, masks: masks.map((m) => [...[m.x, m.y, m.w, m.h].map(Math.round), m.t]) });
     });
@@ -151,7 +152,7 @@ chrome.kill();
 for (const [name, A] of Object.entries(acc)) {
   const res = { label: name, images: A.n, rates: A.missed.reduce((a, b) => a + b), visages: A.total.reduce((a, b) => a + b),
     parTaille: Object.fromEntries(BANDS.map((b, k) => [`${b[0] * 100}-${Math.min(b[1], 1) * 100} %`, `${A.missed[k]}/${A.total[k]}`])),
-    surfaceMasquee: +(100 * A.area / A.n).toFixed(1), surfaceSansVisage: +(100 * A.off / A.n).toFixed(1),
+    carresParImage: +(A.carres / A.n).toFixed(2), surfaceMasquee: +(100 * A.area / A.n).toFixed(1), surfaceSansVisage: +(100 * A.off / A.n).toFixed(1),
     // Répartition de la surface sans visage : pistes de bruit seules ; halo d'un masque qui touche un visage sur l'image ;
     // piste de visage qui ne touche rien sur cette image (débord, trou bouché, dérive).
     dontBruit: +(100 * A.offBruit / A.n).toFixed(1), dontHalo: +(100 * A.offHalo / A.n).toFixed(1), dontDerive: +(100 * (A.off - A.offBruit - A.offHalo) / A.n).toFixed(1),

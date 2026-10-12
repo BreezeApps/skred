@@ -44,6 +44,11 @@ const TRACK = {
   hold: HOLD_FRAMES,  // images de masque ajoutées avant et après un visage
   unionMax: 4,      // une case couvrant 3 positions successives est gardée si elle ne dépasse pas 4 fois la plus grande
   minReach: 0.02,   // distance minimale tolérée (part du petit côté de l'image), pour les très petits visages
+  // Essayé le 12/10/2026 et écarté : réunir en une seule case les cases d'une même image qui se recouvrent (une case par
+  // visage). Banc vidéo réel de nuit, 180 images, 1 012 visages : actuel 65 cases par image, 37 ratés, 17,4 % de l'image
+  // masquée sans visage ; réunion dès 50 % de recouvrement de la plus petite 23 cases, 35 ratés, 19,9 % ; dès 30 % 15, 31,
+  // 22,9 % ; dès 15 % 12, 28, 25,0 %. Les cases en trop sont surtout des suivis distincts empilés, invisibles une fois en
+  // noir ; la réunion couvre en plus les coins vides entre elles et fait de gros pavés dans les foules.
 };
 const DET_SIDE_DEEP = 1920;   // taille de l'image analysée (plus grand côté)
 const DET_SIDE = 1280;        // avec l'option « aller plus vite »
