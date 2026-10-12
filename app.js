@@ -7,7 +7,9 @@ import { createDetector, detectBoth, neededScore } from './detector.js';
 // www.vesky.fr : même chose vers vesky.fr, pour n'avoir qu'un seul site (une seule copie hors ligne, une seule app).
 // Ancienne adresse de l'outil : on repart sur vesky.fr. Ce site-ci y est servi pendant la transition pour que les
 // copies hors ligne déjà installées se mettent à jour et suivent (une redirection côté serveur les bloquerait).
-const OLD_HOST = /^(www\.)?skred\.fr$/.test(location.hostname);
+// Coupé jusqu'à l'annonce du changement de nom en vidéo : remettre à true ce jour-là.
+const REDIRECT_OLD_HOST = false;
+const OLD_HOST = REDIRECT_OLD_HOST && /^(www\.)?skred\.fr$/.test(location.hostname);
 if (OLD_HOST || (location.protocol === 'http:' && !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) || location.hostname === 'www.vesky.fr') {
   const host = OLD_HOST ? 'vesky.fr' : location.host.replace(/^www\./, '');
   location.replace('https://' + host + location.pathname + location.search + location.hash);
