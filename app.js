@@ -1204,46 +1204,211 @@ function pickMime() {
   return list.find((m) => MediaRecorder.isTypeSupported(m)) || null;
 }
 
-async function connectScrambledAudio(destination) {
+async function connectScrambledAudio(destination, options = {}) {
   const ctx = S.audioCtx;
   const source = S.audioNode;
 
-  await ctx.audioWorklet.addModule('/audio/pitch-shifter.js');
+  if (!ctx || !source || !destination) {
+    throw new Error(
+      "AudioContext, source ou destination manquant."
+    );
+  }
 
-  const vocoder = new AudioWorkletNode(ctx, 'pitch-shifter', { numberOfInputs: 1, numberOfOutputs: 1, outputChannelCount: [1] });
+  if (ctx.state === "closed") {
+    throw new Error("L'AudioContext est fermé.");
+  }
 
-  vocoder.parameters.get('semitones').value = -4;
+  await ctx.audioWorklet.addModule(
+    "/audio/pitch-shifter.js"
+  );
+
+  /* const {
+    semitones = -5,
+    character = 0.65,
+    metallic = 0.12,
+    inputGain = 1,
+    outputGain = 1,
+    highpassFrequency = 100,
+    lowpassFrequency = 7500
+  } = options; */
+
+  const {
+    semitones = -10,
+    character = 0.25,
+    metallic = 0.42,
+    inputGain = 0.5,
+    outputGain = 1,
+    highpassFrequency = 150,
+    lowpassFrequency = 7550
+  } = options;
+
+  const worklet = new AudioWorkletNode(
+    ctx,
+    "pitch-shifter",
+    {
+      numberOfInputs: 1,
+      numberOfOutputs: 1,
+      outputChannelCount: [1],
+      channelCount: 1,
+      channelCountMode: "explicit",
+      channelInterpretation: "speakers"
+    }
+  );
+
+  const input = ctx.createGain();
+  input.gain.value = inputGain;
 
   const highpass = ctx.createBiquadFilter();
-  highpass.type = 'highpass';
-  highpass.frequency.value = 100;
+  highpass.type = "highpass";
+  highpass.frequency.value = highpassFrequency;
+  highpass.Q.value = 0.707;
 
   const lowpass = ctx.createBiquadFilter();
-  lowpass.type = 'lowpass';
-  lowpass.frequency.value = 7000;
+  lowpass.type = "lowpass";
+  lowpass.frequency.value = lowpassFrequency;
+  lowpass.Q.value = 0.707;
 
   const output = ctx.createGain();
-  output.gain.value = 1.0;
+  output.gain.value = outputGain;
 
-  source.connect(highpass);
-  highpass.connect(vocoder);
-  vocoder.connect(lowpass);
-  lowpass.connect(output);
-  output.connect(destination);
+  const nodes = [
+    input,
+    highpass,
+    worklet,
+    lowpass,
+    output
+  ];
 
-  return () => {
-    for (const node of [
-      source,
-      highpass,
-      vocoder,
-      lowpass,
-      output
-    ]) {
+  const connections = [];
+
+  function connect(from, to) {
+    from.connect(to);
+    connections.push([from, to]);
+  }
+
+  try {
+    worklet.parameters.get("semitones").setValueAtTime(
+      semitones,
+      ctx.currentTime
+    );
+
+    worklet.parameters.get("character").setValueAtTime(
+      character,
+      ctx.currentTime
+    );
+
+    worklet.parameters.get("metallic").setValueAtTime(
+      metallic,
+      ctx.currentTime
+    );
+
+    connect(source, input);
+    connect(input, highpass);
+    connect(highpass, worklet);
+    connect(worklet, lowpass);
+    connect(lowpass, output);
+    connect(output, destination);
+
+    let disconnected = false;
+
+    return () => {
+      if (disconnected) return;
+      disconnected = true;
+
+      for (const [from, to] of connections) {
+        try {
+          from.disconnect(to);
+        } catch {}
+      }
+
+      for (const node of nodes) {
+        try {
+          node.disconnect();
+        } catch {}
+      }
+
+      worklet.port.close();
+    };
+
+    /* return {
+      node: worklet,
+
+      setParameters({
+        semitones: nextSemitones,
+        character: nextCharacter,
+        metallic: nextMetallic
+      } = {}) {
+        const now = ctx.currentTime;
+
+        if (nextSemitones !== undefined) {
+          worklet.parameters
+            .get("semitones")
+            .setTargetAtTime(
+              nextSemitones,
+              now,
+              0.03
+            );
+        }
+
+        if (nextCharacter !== undefined) {
+          worklet.parameters
+            .get("character")
+            .setTargetAtTime(
+              nextCharacter,
+              now,
+              0.03
+            );
+        }
+
+        if (nextMetallic !== undefined) {
+          worklet.parameters
+            .get("metallic")
+            .setTargetAtTime(
+              nextMetallic,
+              now,
+              0.03
+            );
+        }
+      },
+
+      disconnect() {
+        if (disconnected) return;
+        disconnected = true;
+
+        // Déconnecter uniquement les liaisons créées
+        // par cette instance.
+        for (const [from, to] of connections) {
+          try {
+            from.disconnect(to);
+          } catch {}
+        }
+
+        for (const node of nodes) {
+          try {
+            node.disconnect();
+          } catch {}
+        }
+
+        worklet.port.close();
+      }
+    }; */
+  } catch (error) {
+    for (const [from, to] of connections) {
+      try {
+        from.disconnect(to);
+      } catch {}
+    }
+
+    for (const node of nodes) {
       try {
         node.disconnect();
       } catch {}
     }
-  };
+
+    worklet.port.close();
+
+    throw error;
+  }
 }
 
 // Export rapide. Renvoie false s'il n'a pas pu aller au bout : l'export suivant se fera par enregistrement.
