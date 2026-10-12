@@ -365,7 +365,7 @@ async function init() {
     console.error(e);
     if (window.diag) window.diag('init échoue : ' + (e && e.message) + ' | ' + String(e && e.stack).slice(0, 300));
     $('pickText').textContent = 'Outil indisponible';
-    fail($('homeError'), 'L\'outil n\'a pas pu se charger sur ce navigateur. Essaie avec Chrome ou Safari à jour.');
+    fail($('homeError'), "L'outil n'a pas pu se charger sur ce navigateur. Essaie avec Chrome ou Safari à jour.");
   }
 }
 
@@ -484,7 +484,7 @@ async function loadFile(file) {
     if (!w || !h) throw new Error('illisible');
   } catch (e) {
     if (window.diag) window.diag('échec lecture : ' + (e && e.message));
-    fail($('homeError'), 'Ton navigateur n\'arrive pas à lire ce fichier. Essaie avec un autre, ou enregistre-le dans un autre format.');
+    fail($('homeError'), "Ton navigateur n'arrive pas à lire ce fichier. Essaie avec un autre, ou enregistre-le dans un autre format.");
     return;
   }
 
@@ -586,7 +586,7 @@ async function scan() {
     // Une image non analysée serait une image non masquée : on préfère tout arrêter.
     console.error(error || 'images manquantes');
     goHome();
-    fail($('homeError'), 'L\'analyse a échoué sur ce navigateur. Essaie avec Chrome ou Safari à jour.');
+    fail($('homeError'), "L'analyse a échoué sur ce navigateur. Essaie avec Chrome ou Safari à jour.");
     return;
   }
   S.scanMs = performance.now() - started;
@@ -973,7 +973,7 @@ function refreshPanels() {
   const j = frameIndex(S.t);
   const off = tr && isOff(tr, j);
   const last = tr && tr.off[tr.off.length - 1];
-  const fromHere = tr && tr.off.length && last.at !== j && !isPhoto() ? ' à partir d\'ici' : '';
+  const fromHere = tr && tr.off.length && last.at !== j && !isPhoto() ? " à partir d'ici" : '';
   $('mDelete').textContent = off ? '↺' : '×';
   $('mDelete').title = tr ? (off ? 'Remettre ce masque' : 'Retirer ce masque') + fromHere : 'Retirer';
   const removed = S.tracks.filter(isRemoved).length;
@@ -1145,7 +1145,7 @@ async function finish(blob, name, info) {
   $('result').onerror = () => {
     if (isPhoto() || !S.previewUrl) return;
     $('result').hidden = true;
-    $('doneCheck').textContent = 'L\'aperçu ne s\'affiche pas ici. Ouvre la vidéo enregistrée et regarde-la en entier avant de poster.';
+    $('doneCheck').textContent = "L'aperçu ne s'affiche pas ici. Ouvre la vidéo enregistrée et regarde-la en entier avant de poster.";
   };
   (isPhoto() ? $('resultImg') : $('result')).src = S.previewUrl;
   $('download').href = S.resultUrl;
@@ -1165,7 +1165,7 @@ async function exportPhoto() {
   drawSource(vctx);
   paint(vctx, 0, false);
   const blob = await new Promise((r) => view.toBlob(r, 'image/jpeg', 0.92));
-  if (!blob) { fail($('fatal'), 'Ce navigateur n\'a pas pu créer la photo.'); return; }
+  if (!blob) { fail($('fatal'), "Ce navigateur n'a pas pu créer la photo."); return; }
   finish(blob, 'photo-masquee.jpg', 'Fichier JPEG');
 }
 
@@ -1324,12 +1324,12 @@ async function exportVideo() {
     // L'enregistrement doit démarrer juste après un appui sur le bouton (pour le son sur iPhone) : on redemande.
     S.fast = false;
     openReview(0);
-    fail($('fatal'), 'L\'export rapide n\'a pas marché ici. Touche Exporter à nouveau : la vidéo sera créée à vitesse normale.');
+    fail($('fatal'), "L'export rapide n'a pas marché ici. Touche Exporter à nouveau : la vidéo sera créée à vitesse normale.");
     return;
   }
   const mime = pickMime();
   if (!mime || !view.captureStream) {
-    fail($('fatal'), 'Ce navigateur ne sait pas créer de vidéo. Essaie avec Chrome ou Safari à jour.');
+    fail($('fatal'), "Ce navigateur ne sait pas créer de vidéo. Essaie avec Chrome ou Safari à jour.");
     return;
   }
   $('fatal').hidden = true;
@@ -1369,7 +1369,7 @@ async function exportVideo() {
   if (audioFailed && audioMode === 'scramble') {
     if (audioCleanup) audioCleanup();
     video.muted = false;
-    fail($('fatal'), 'Le brouillage audio n\'a pas pu être activé. Essaie avec Chrome ou Safari à jour ; aucun fichier n\'a été créé.');
+    fail($('fatal'), "Le brouillage audio n'a pas pu être activé. Essaie avec Chrome ou Safari à jour ; aucun fichier n'a été créé.");
     return;
   }
 
@@ -1378,7 +1378,7 @@ async function exportVideo() {
   show('export');
   $('exportBar').style.width = '0';
   $('exportPct').textContent = '0%';
-  $('exportText').textContent = audioFailed ? 'Le son n\'a pas pu être repris : la vidéo sera muette.' : audioMode === 'scramble' ? 'Brouillage actif sur toute la piste audio. Export à vitesse réelle.' : '';
+  $('exportText').textContent = audioFailed ? "Le son n'a pas pu être repris : la vidéo sera muette." : audioMode === 'scramble' ? "Brouillage actif sur toute la piste audio. Export à vitesse réelle." : '';
   await keepAwake(true);
 
   const draw = (t) => {
@@ -1394,7 +1394,7 @@ async function exportVideo() {
     S.job = null;
     await keepAwake(false);
     openReview(0);
-    if (!job.cancelled) fail($('fatal'), 'La création de la vidéo a échoué sur ce navigateur. Essaie avec Chrome ou Safari à jour.');
+    if (!job.cancelled) fail($('fatal'), "La création de la vidéo a échoué sur ce navigateur. Essaie avec Chrome ou Safari à jour.");
     return;
   }
   draw(0);
@@ -1464,6 +1464,7 @@ async function exportVideo() {
   const type = (rec.mimeType || mime).split(';')[0];
   const mp4 = type.includes('mp4');
   const made = new Blob(chunks, { type });
+  video.muted = true
   finish(mp4 ? await scrubMp4Dates(made) : made, 'video-masquee.' + (mp4 ? 'mp4' : 'webm'), `Fichier ${mp4 ? 'MP4' : 'WebM'}${audioMode === 'scramble' ? ', son brouillé' : audioDest ? ', avec le son' : ', sans le son'}`);
 }
 
@@ -1481,7 +1482,7 @@ if (ANDROID) {
     const where = isPhoto() ? 'Images/vesky' : 'Films/vesky';
     const r = await androidSend(S.resultFile, 'save');
     $('doneInfo').textContent = $('doneInfo').textContent.replace(/ (Enregistrée|Pas enregistrée).*$/, '')
-      + (r === 'saved' ? ` Enregistrée dans ${where}.` : ' Pas enregistrée : réessaie avec le bouton.');
+      + (r === 'saved' ? ` Enregistrée dans ${where}.` : " Pas enregistrée : réessaie avec le bouton.");
   });
 }
 $('back').onclick = () => { $('result').pause(); openReview(S.t); };
@@ -1574,7 +1575,7 @@ if (/iPhone|iPad|iPod/.test(navigator.userAgent) || (/Macintosh/.test(navigator.
     if (waiting) return;
     waiting = setTimeout(() => {
       waiting = null;
-      if (!S.file && !$('s-home').hidden) fail($('homeError'), 'Aucune vidéo reçue : la photothèque de l\'iPhone n\'en transmet pas toujours. Enregistre la vidéo dans Fichiers (Partager, puis « Enregistrer dans Fichiers »), puis touche le carré et « Choisir le fichier ».');
+      if (!S.file && !$('s-home').hidden) fail($('homeError'), "Aucune vidéo reçue : la photothèque de l'iPhone n'en transmet pas toujours. Enregistre la vidéo dans Fichiers (Partager, puis « Enregistrer dans Fichiers »), puis touche le carré et « Choisir le fichier ».");
     }, 4000);
   };
   $('file').addEventListener('cancel', nothingCame);
@@ -1599,7 +1600,7 @@ if (/iPhone|iPad|iPod/.test(navigator.userAgent) || (/Macintosh/.test(navigator.
   if (!installed && touch && ios) {
     button.hidden = false;
     if (/Instagram|FBAN|FBAV|TikTok|musical_ly|Snapchat|LinkedInApp|Twitter/.test(ua)) $('iosInApp').hidden = false;
-    else if (/CriOS|FxiOS|EdgiOS/.test(ua)) $('iosShare').textContent = 'Touche le bouton Partager, dans la barre d\'adresse';
+    else if (/CriOS|FxiOS|EdgiOS/.test(ua)) $('iosShare').textContent = "Touche le bouton Partager, dans la barre d'adresse";
   }
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();

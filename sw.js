@@ -8,6 +8,7 @@ const FILES = [
   'app.js',
   'detector.js',
   'detect-worker.js',
+  'audio/pitch-shifter.js',
   'manifest.webmanifest',
   'icons/icon-180.png',
   'icons/icon-192.png',
