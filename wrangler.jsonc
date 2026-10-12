@@ -1,7 +1,7 @@
 // Mise en ligne sur Cloudflare (Workers, fichiers statiques seulement : aucun code ne tourne côté serveur).
 // Publier : node outils/build.mjs puis npx wrangler deploy
 {
-  "name": "skred",
+  "name": "vesky",
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./dist",
@@ -9,6 +9,9 @@
     "not_found_handling": "404-page"
   },
   "routes": [
+    { "pattern": "vesky.fr", "custom_domain": true },
+    { "pattern": "www.vesky.fr", "custom_domain": true },
+    // Ancienne adresse, gardée le temps de la transition : app.js renvoie ses visiteurs sur vesky.fr.
     { "pattern": "skred.fr", "custom_domain": true },
     { "pattern": "www.skred.fr", "custom_domain": true }
   ],

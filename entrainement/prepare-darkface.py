@@ -9,7 +9,7 @@ import sys
 
 import cv2
 
-DATA = sys.argv[1] if len(sys.argv) > 1 else 'D:/datasets/skred-eval'
+DATA = sys.argv[1] if len(sys.argv) > 1 else 'D:/datasets/vesky-eval'
 here = os.path.dirname(os.path.abspath(__file__))
 labels = os.path.join(DATA, 'darkface', 'label')
 images = os.path.join(DATA, 'darkface', 'image')

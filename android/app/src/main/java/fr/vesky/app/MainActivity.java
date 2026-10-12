@@ -1,4 +1,4 @@
-package fr.skred.app;
+package fr.vesky.app;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -46,11 +46,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * skred pour Android : le site entier est rangé dans l'app (assets/site) et affiché par une WebView.
+ * vesky pour Android : le site entier est rangé dans l'app (assets/site) et affiché par une WebView.
  * L'app n'a aucune permission, pas même internet. Les fichiers sont servis à une adresse locale
  * (https://appassets.androidplatform.net), qui ne quitte jamais le téléphone.
  *
- * Ce que le navigateur faisait seul et que l'app fait ici, à la demande de la page (objet skredAndroid) :
+ * Ce que le navigateur faisait seul et que l'app fait ici, à la demande de la page (objet veskyAndroid) :
  * choisir un fichier, enregistrer la vidéo masquée dans la galerie, la partager, garder l'écran allumé,
  * et recevoir une vidéo partagée depuis la galerie.
  */
@@ -137,7 +137,7 @@ public class MainActivity extends Activity {
         });
 
         if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER)) {
-            WebViewCompat.addWebMessageListener(web, "skredAndroid", Collections.singleton(ORIGIN),
+            WebViewCompat.addWebMessageListener(web, "veskyAndroid", Collections.singleton(ORIGIN),
                 (view, message, origin, isMainFrame, reply) -> onMessage(message, reply));
         }
 
@@ -312,14 +312,14 @@ public class MainActivity extends Activity {
         out = null;
     }
 
-    // Enregistre dans la galerie : Films/skred pour une vidéo, Images/skred pour une photo.
+    // Enregistre dans la galerie : Films/vesky pour une vidéo, Images/vesky pour une photo.
     private boolean save() {
         boolean photo = outType.startsWith("image/");
         ContentResolver cr = getContentResolver();
         ContentValues v = new ContentValues();
         v.put(MediaStore.MediaColumns.DISPLAY_NAME, outName);
         v.put(MediaStore.MediaColumns.MIME_TYPE, outType);
-        v.put(MediaStore.MediaColumns.RELATIVE_PATH, (photo ? Environment.DIRECTORY_PICTURES : Environment.DIRECTORY_MOVIES) + "/skred");
+        v.put(MediaStore.MediaColumns.RELATIVE_PATH, (photo ? Environment.DIRECTORY_PICTURES : Environment.DIRECTORY_MOVIES) + "/vesky");
         v.put(MediaStore.MediaColumns.IS_PENDING, 1);
         Uri collection = photo
             ? MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
@@ -342,7 +342,7 @@ public class MainActivity extends Activity {
 
     private boolean share() {
         try {
-            Uri u = FileProvider.getUriForFile(this, "fr.skred.app.files", outFile);
+            Uri u = FileProvider.getUriForFile(this, "fr.vesky.app.files", outFile);
             Intent send = new Intent(Intent.ACTION_SEND);
             send.setType(outType);
             send.putExtra(Intent.EXTRA_STREAM, u);

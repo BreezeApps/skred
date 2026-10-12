@@ -7,7 +7,7 @@ import json
 import os
 import sys
 
-DATA = sys.argv[1] if len(sys.argv) > 1 else 'D:/datasets/skred-eval'
+DATA = sys.argv[1] if len(sys.argv) > 1 else 'D:/datasets/vesky-eval'
 here = os.path.dirname(os.path.abspath(__file__))
 split = json.load(open(os.path.join(here, 'reel-ab.json')))
 ref = {e['image']: e for e in json.load(open(os.path.join(DATA, 'reel', 'reel.json'))) if e['checked']}

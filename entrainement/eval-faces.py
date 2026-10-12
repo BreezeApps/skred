@@ -16,7 +16,7 @@ import numpy as np
 import onnxruntime as ort
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA = sys.argv[1] if len(sys.argv) > 1 else 'D:/datasets/skred-eval'
+DATA = sys.argv[1] if len(sys.argv) > 1 else 'D:/datasets/vesky-eval'
 STRIDES = (8, 16, 32)
 NMS_IOU = 0.3
 KEEP_SCORE = 0.15

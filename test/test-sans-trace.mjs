@@ -14,7 +14,7 @@ const SITE = 'http://localhost:5173/';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const chrome = spawn(CHROME, [
-  '--headless=new', `--remote-debugging-port=${PORT}`, `--user-data-dir=${mkdtempSync(join(tmpdir(), 'skred-'))}`,
+  '--headless=new', `--remote-debugging-port=${PORT}`, `--user-data-dir=${mkdtempSync(join(tmpdir(), 'vesky-'))}`,
   '--autoplay-policy=no-user-gesture-required', '--window-size=420,900', '--no-first-run', 'about:blank',
 ], { stdio: 'ignore' });
 
@@ -42,14 +42,14 @@ const run = async (expression) => {
 async function traiter(file, raw) {
   await send('Page.navigate', { url: SITE });
   await sleep(1000);
-  await run(`while (!window.skred || document.getElementById('file').disabled) await new Promise(r => setTimeout(r, 100));`);
+  await run(`while (!window.vesky || document.getElementById('file').disabled) await new Promise(r => setTimeout(r, 100));`);
   await run(`const b = await (await fetch('test/${file}')).blob(); const dt = new DataTransfer(); dt.items.add(new File([b], '${file}', { type: 'video/webm' }));
     const inp = document.getElementById('file'); inp.files = dt.files; inp.dispatchEvent(new Event('change'));`);
   await run(`while (document.getElementById('s-review').hidden) await new Promise(r => setTimeout(r, 100));`);
-  if (raw) await run(`const S = window.skred.S; S.raw = ${JSON.stringify(raw)}; window.skred.retrack({});`);
-  const used = await run(`return window.skred.S.raw;`);
+  if (raw) await run(`const S = window.vesky.S; S.raw = ${JSON.stringify(raw)}; window.vesky.retrack({});`);
+  const used = await run(`return window.vesky.S.raw;`);
   await run(`document.getElementById('export').click(); while (document.getElementById('s-done').hidden && document.getElementById('fatal').hidden) await new Promise(r => setTimeout(r, 200));`);
-  const res = await run(`const S = window.skred.S; const buf = await S.resultFile.arrayBuffer();
+  const res = await run(`const S = window.vesky.S; const buf = await S.resultFile.arrayBuffer();
     const h = [...new Uint8Array(await crypto.subtle.digest('SHA-256', buf))].map(x => x.toString(16).padStart(2, '0')).join('');
     return { taille: buf.byteLength, empreinte: h, info: document.getElementById('doneInfo').textContent, erreur: document.getElementById('fatal').textContent, masques: S.tracks.length };`);
   return { ...res, raw: used };

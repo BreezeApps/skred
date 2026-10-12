@@ -67,7 +67,7 @@ with open(DST, 'w') as out:
             if r['source'] == 'youtube':
                 cmd = ['yt-dlp', '-q', '-f', 'bv*[height<=1080][ext=mp4]/bv*[height<=1080]/b', '--remux-video', 'mp4', '-o', vid, r['url']]
             else:
-                cmd = ['curl', '-sL', '-A', 'skred-entrainement/1.0', '-o', vid + '.src', r['url']]
+                cmd = ['curl', '-sL', '-A', 'vesky-entrainement/1.0', '-o', vid + '.src', r['url']]
             if subprocess.run(cmd).returncode != 0:
                 print('échec', r['url'], flush=True)
                 continue

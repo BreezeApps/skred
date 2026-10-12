@@ -11,7 +11,7 @@ const SITE = 'http://localhost:5173/';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const chrome = spawn(CHROME, [
-  '--headless=new', `--remote-debugging-port=${PORT}`, `--user-data-dir=${mkdtempSync(join(tmpdir(), 'skred-'))}`,
+  '--headless=new', `--remote-debugging-port=${PORT}`, `--user-data-dir=${mkdtempSync(join(tmpdir(), 'vesky-'))}`,
   '--autoplay-policy=no-user-gesture-required', '--window-size=420,900', '--no-first-run', 'about:blank',
 ], { stdio: 'ignore' });
 
@@ -42,7 +42,7 @@ await send('Page.enable');
 await send('Page.navigate', { url: SITE });
 await sleep(1000);
 await run(`while (document.getElementById('file').disabled) await new Promise(r => setTimeout(r, 100));`);
-const out = { parallel: await run(`return window.skred.S.parallel;`) };
+const out = { parallel: await run(`return window.vesky.S.parallel;`) };
 
 // Arguments : fichier (dans test/), échelle des positions connues (1.5 pour test3.mp4 en 1080 x 1920),
 // puis au choix "fast" (analyse rapide), "noexport" (analyse seule), "save" (enregistre la vidéo masquée dans test/out/).
@@ -63,20 +63,20 @@ await run(`const b = await (await fetch('test/${file}')).blob(); const dt = new 
 const mark = requests.length;
 await run(`while (document.getElementById('s-review').hidden) await new Promise(r => setTimeout(r, 100));`);
 
-const STATS = `const stats = () => { const S = window.skred.S; const miss = [0,0,0,0];
+const STATS = `const stats = () => { const S = window.vesky.S; const miss = [0,0,0,0];
   if (${known}) S.frames.forEach((boxes, i) => truth((i + 0.5) / S.fps).forEach(([X, Y], k) => { if (!boxes.some(b => X >= b.x && X <= b.x + b.w && Y >= b.y && Y <= b.y + b.h)) miss[k]++; }));
   return { suivis: S.tracks.length, casesParImage: +(S.frames.reduce((a, f) => a + f.length, 0) / S.frames.length).toFixed(1), imagesSansMasque: ${known} ? miss : 'non mesuré' }; };`;
-out.scan = await run(`${TRUTH} ${STATS} const S = window.skred.S;
+out.scan = await run(`${TRUTH} ${STATS} const S = window.vesky.S;
   return { taille: S.W + 'x' + S.H, images: S.frames.length, msParImage: Math.round(S.scanMs / S.frames.length), imagesReprisesUneParUne: S.seekFallbacks, fpsSource: +S.srcFps.toFixed(2),
     visagesSursParImage: +(S.raw.reduce((a, f) => a + f.filter(d => d.s >= 0.3).length, 0) / S.raw.length).toFixed(1), ...stats() };`);
 out.reglages = await run(`${TRUTH} ${STATS} const res = {};
-  for (const [match, lowMatch] of [[1, 0], [1, 0.6], [1.6, 0], [1.6, 0.6], [2.5, 0.6], [2.5, 1]]) { window.skred.retrack({ match, lowMatch }); res[match + ' / ' + lowMatch] = stats(); }
-  window.skred.retrack({ match: 1.6, lowMatch: 0.6 }); return res;`);
+  for (const [match, lowMatch] of [[1, 0], [1, 0.6], [1.6, 0], [1.6, 0.6], [2.5, 0.6], [2.5, 1]]) { window.vesky.retrack({ match, lowMatch }); res[match + ' / ' + lowMatch] = stats(); }
+  window.vesky.retrack({ match: 1.6, lowMatch: 0.6 }); return res;`);
 const save = process.argv.includes('save');   // enregistre la vidéo masquée dans test/out/
 if ((!known && !save) || process.argv.includes('noexport')) { console.log(JSON.stringify(out, null, 2)); ws.close(); chrome.kill(); process.exit(0); }
 await run(`document.getElementById('export').click(); while (document.getElementById('s-done').hidden && document.getElementById('fatal').hidden) await new Promise(r => setTimeout(r, 200));`);
 
-out.export = await run(`${TRUTH} const S = window.skred.S; const v = document.getElementById('result');
+out.export = await run(`${TRUTH} const S = window.vesky.S; const v = document.getElementById('result');
   await new Promise(r => setTimeout(r, 500));
   const c = document.createElement('canvas'); c.width = S.W; c.height = S.H; const x = c.getContext('2d', { willReadFrequently: true });
   const lit = (X, Y) => { const d = x.getImageData(Math.round(X), Math.round(Y), 1, 1).data; return d[0] + d[1] + d[2] > 40 ? 1 : 0; };
@@ -126,10 +126,10 @@ out.export = await run(`${TRUTH} const S = window.skred.S; const v = document.ge
 
 if (save) {
   // Le fichier est rapatrié par morceaux de 1 Mo : un seul gros message ne passe pas.
-  const size = await run(`return window.skred.S.resultFile.size;`);
+  const size = await run(`return window.vesky.S.resultFile.size;`);
   const parts = [];
   for (let o = 0; o < size; o += 1 << 20) {
-    const b64 = await run(`const buf = new Uint8Array(await window.skred.S.resultFile.slice(${o}, ${o} + (1 << 20)).arrayBuffer()); let s = ''; for (let i = 0; i < buf.length; i += 32768) s += String.fromCharCode(...buf.subarray(i, i + 32768)); return btoa(s);`);
+    const b64 = await run(`const buf = new Uint8Array(await window.vesky.S.resultFile.slice(${o}, ${o} + (1 << 20)).arrayBuffer()); let s = ''; for (let i = 0; i < buf.length; i += 32768) s += String.fromCharCode(...buf.subarray(i, i + 32768)); return btoa(s);`);
     parts.push(Buffer.from(b64, 'base64'));
   }
   const { mkdirSync, writeFileSync } = await import('node:fs');

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Vérifie que skred.fr sert exactement le code du dépôt, à l'octet près : chaque fichier du site est téléchargé
+# Vérifie que vesky.fr sert exactement le code du dépôt, à l'octet près : chaque fichier du site est téléchargé
 # et comparé à sa version dans le dernier commit (pas aux fichiers modifiés sur le disque).
 # Vérifie aussi que la politique de sécurité envoyée par le site est celle de _headers.
 # Besoin : git, curl.
 # Usage : bash outils/verifier-site.sh   (depuis la racine du dépôt)
 #         SITE=https://autre.adresse bash outils/verifier-site.sh
 set -e
-site=${SITE:-https://skred.fr}
+site=${SITE:-https://vesky.fr}
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 ok=0

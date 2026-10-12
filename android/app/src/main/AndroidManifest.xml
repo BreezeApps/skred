@@ -3,11 +3,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
-        android:label="skred"
+        android:label="vesky"
         android:icon="@mipmap/ic_launcher"
         android:allowBackup="false"
         android:supportsRtl="false"
-        android:theme="@style/Skred">
+        android:theme="@style/Vesky">
 
         <activity
             android:name=".MainActivity"
@@ -19,7 +19,7 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <!-- « Partager » depuis la galerie : la vidéo ou la photo s'ouvre dans skred. -->
+            <!-- « Partager » depuis la galerie : la vidéo ou la photo s'ouvre dans vesky. -->
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -30,7 +30,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="fr.skred.app.files"
+            android:authorities="fr.vesky.app.files"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

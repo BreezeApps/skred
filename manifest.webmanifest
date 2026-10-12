@@ -1,6 +1,6 @@
 {
-  "name": "skred · masque les visages",
-  "short_name": "skred",
+  "name": "vesky · masque les visages",
+  "short_name": "vesky",
   "description": "Masque les visages d'une vidéo ou d'une photo, directement sur ton téléphone. Rien n'est envoyé sur internet.",
   "lang": "fr",
   "start_url": "./",

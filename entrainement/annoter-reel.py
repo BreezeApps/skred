@@ -6,7 +6,7 @@ import os
 import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-DATA = sys.argv[1] if len(sys.argv) > 1 else 'D:/datasets/skred-eval'
+DATA = sys.argv[1] if len(sys.argv) > 1 else 'D:/datasets/vesky-eval'
 OUT = os.path.join(DATA, 'reel')
 REF = os.path.join(OUT, 'reel.json')
 

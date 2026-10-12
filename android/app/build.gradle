@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'fr.skred.app'
+    namespace 'fr.vesky.app'
     compileSdk 36
 
     defaultConfig {
-        applicationId 'fr.skred.app'
+        applicationId 'fr.vesky.app'
         minSdk 29
         targetSdk 36
         versionCode 1
@@ -15,9 +15,12 @@ android {
     }
 
     // Signature des APK publiés sur GitHub. La clé et ses mots de passe restent hors du dépôt :
-    // le chemin du fichier qui les décrit est donné par SKRED_KEYSTORE (sinon ~/.skred-signature/keystore.properties).
+    // le chemin du fichier qui les décrit est donné par VESKY_KEYSTORE (sinon ~/.vesky-signature/keystore.properties,
+    // ou l'ancien dossier ~/.skred-signature s'il n'a pas été renommé).
     // Sans ce fichier (F-Droid, IzzyOnDroid, une autre personne), l'APK de publication sort non signé.
-    def ksFile = file(System.getenv('SKRED_KEYSTORE') ?: "${System.getProperty('user.home')}/.skred-signature/keystore.properties")
+    def home = System.getProperty('user.home')
+    def ksFile = file(System.getenv('VESKY_KEYSTORE') ?: (file("${home}/.vesky-signature/keystore.properties").exists()
+        ? "${home}/.vesky-signature/keystore.properties" : "${home}/.skred-signature/keystore.properties"))
     if (ksFile.exists()) {
         def ks = new Properties()
         ksFile.withInputStream { ks.load(it) }

@@ -1,4 +1,4 @@
-# Compare le détecteur de skred (YuNet, règle du site) à SCRFD-500M (https://github.com/deepinsight/insightface, poids
+# Compare le détecteur de vesky (YuNet, règle du site) à SCRFD-500M (https://github.com/deepinsight/insightface, poids
 # réservés à la recherche non commerciale ; ONNX : scrfd_500m_kps.onnx sur github.com/yakhyo/uniface/releases/tag/weights),
 # sur les mêmes banques de photos annotées que entrainement/eval-faces.py (WIDER FACE, DARK FACE).
 # Usage : python entrainement/eval-scrfd.py <dossier des banques> <chemin du .onnx>
@@ -14,7 +14,7 @@ import numpy as np
 import onnxruntime as ort
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DATA = sys.argv[1] if len(sys.argv) > 1 else 'D:/datasets/skred-eval'
+DATA = sys.argv[1] if len(sys.argv) > 1 else 'D:/datasets/vesky-eval'
 SCRFD_PATH = sys.argv[2] if len(sys.argv) > 2 else os.path.join(DATA, 'modeles', 'scrfd', 'scrfd_500m_kps.onnx')
 sys.argv = [sys.argv[0], DATA]
 spec = importlib.util.spec_from_file_location('ev', os.path.join(HERE, 'eval-faces.py'))
@@ -27,7 +27,7 @@ session_scrfd = ort.InferenceSession(SCRFD_PATH, providers=['CPUExecutionProvide
 
 
 def scrfd(img):
-    """Même réduction de l'image que skred (plus grand côté 1920 au plus), bords complétés jusqu'à un multiple de 32.
+    """Même réduction de l'image que vesky (plus grand côté 1920 au plus), bords complétés jusqu'à un multiple de 32.
     Décodage repris de entrainement/distiller-wider.py (deux ancres par case, distances aux bords du cadre)."""
     h, w = img.shape[:2]
     s = min(1.0, ev.MAX_SIDE / max(w, h))

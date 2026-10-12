@@ -1,4 +1,4 @@
-# Compare le détecteur de skred (YuNet, règle du site) à CenterFace, le modèle de deface (https://github.com/ORB-HD/deface),
+# Compare le détecteur de vesky (YuNet, règle du site) à CenterFace, le modèle de deface (https://github.com/ORB-HD/deface),
 # sur les mêmes banques de photos annotées que entrainement/eval-faces.py (WIDER FACE, DARK FACE).
 # Usage : python entrainement/eval-centerface.py <dossier des banques> <chemin de centerface.onnx>
 # (centerface.onnx : https://github.com/ORB-HD/deface/tree/master/deface ; besoin : pip install onnx onnxruntime opencv-python numpy)
@@ -16,7 +16,7 @@ import onnxruntime as ort
 from onnx.tools.update_model_dims import update_inputs_outputs_dims
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DATA = sys.argv[1] if len(sys.argv) > 1 else 'D:/datasets/skred-eval'
+DATA = sys.argv[1] if len(sys.argv) > 1 else 'D:/datasets/vesky-eval'
 CF_PATH = sys.argv[2] if len(sys.argv) > 2 else os.path.join(HERE, 'centerface.onnx')
 sys.argv = [sys.argv[0], DATA]
 spec = importlib.util.spec_from_file_location('ev', os.path.join(HERE, 'eval-faces.py'))
@@ -35,7 +35,7 @@ cf = ort.InferenceSession(update_inputs_outputs_dims(m, ins, outs).SerializeToSt
 
 
 def centerface(img):
-    """Décodage repris de deface/centerface.py. Même réduction de l'image que skred (plus grand côté 1920 au plus)."""
+    """Décodage repris de deface/centerface.py. Même réduction de l'image que vesky (plus grand côté 1920 au plus)."""
     h, w = img.shape[:2]
     s = min(1.0, ev.MAX_SIDE / max(w, h))
     dw, dh = max(1, round(w * s)), max(1, round(h * s))

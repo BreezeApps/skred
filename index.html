@@ -7,12 +7,12 @@
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#efede6">
 <meta name="description" content="Masque les visages d'une vidéo ou d'une photo avec un carré plein, directement sur ton téléphone. Rien n'est envoyé sur internet.">
-<title>skred · masque les visages avant de poster</title>
+<title>vesky · masque les visages avant de poster</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2032%2032%22%3E%3Crect%20width=%2232%22%20height=%2232%22%20fill=%22%23efede6%22/%3E%3Crect%20x=%226%22%20y=%226%22%20width=%2220%22%20height=%2220%22%20fill=%22%230b0b0a%22/%3E%3C/svg%3E">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="skred">
+<meta name="apple-mobile-web-app-title" content="vesky">
 <link rel="stylesheet" href="vendor/fonts/fonts.css">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -20,7 +20,7 @@
 
 <!-- Accueil -->
 <section id="s-home" class="screen paper">
-  <header class="top"><span class="brand">skred</span><button class="install" id="install" type="button" hidden>Installer l'app</button></header>
+  <header class="top"><span class="brand">vesky</span><button class="install" id="install" type="button" hidden>Installer l'app</button></header>
   <div class="middle">
     <h1 class="title">Masque<br>les visages.</h1>
     <label class="square pick" id="pickLabel" aria-disabled="true">
@@ -33,7 +33,7 @@
   <footer class="foot">
     <span id="footNote">Rien ne quitte ton téléphone.</span>
     <label class="fast"><input type="checkbox" id="fast"> Mode rapide (peut rater les très petits visages)</label>
-    <a href="verifier.html">Vérifier skred</a>
+    <a href="verifier.html">Vérifier vesky</a>
     <a href="mentions.html">Mentions légales</a>
     <span id="version"></span>
   </footer>
@@ -43,7 +43,7 @@
 <div class="sheetBack" id="iosSheet" hidden>
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="iosTitle">
     <h2 id="iosTitle">Installer<br>sur iPhone</h2>
-    <p class="note">Gratuit, sans App Store. skred s'ouvrira comme une app, même sans réseau.</p>
+    <p class="note">Gratuit, sans App Store. vesky s'ouvrira comme une app, même sans réseau.</p>
     <ol class="steps">
       <li id="iosInApp" hidden><span class="n">0</span><span class="t">Ouvre cette page dans Safari : menu ⋯ puis « Ouvrir dans Safari » ou « dans le navigateur »</span><span></span></li>
       <li><span class="n">1</span><span class="t" id="iosShare">Touche le bouton Partager, en bas de Safari. Sur iOS 26, il est dans le menu ⋯ en bas à droite</span>
@@ -58,7 +58,7 @@
 
 <!-- Analyse -->
 <section id="s-scan" class="screen paper" hidden>
-  <header class="top"><span class="brand">skred</span></header>
+  <header class="top"><span class="brand">vesky</span></header>
   <div class="middle">
     <span class="big" id="scanText">0%</span>
     <div class="square frame" id="scanFrame">
@@ -100,7 +100,7 @@
 
 <!-- Création -->
 <section id="s-export" class="screen paper" hidden>
-  <header class="top"><span class="brand">skred</span></header>
+  <header class="top"><span class="brand">vesky</span></header>
   <div class="middle">
     <span class="big" id="exportPct">0%</span>
     <div class="square frame" id="exportFrame">
@@ -114,7 +114,7 @@
 
 <!-- Résultat -->
 <section id="s-done" class="screen paper" hidden>
-  <header class="top"><span class="brand">skred</span></header>
+  <header class="top"><span class="brand">vesky</span></header>
   <div class="middle">
     <span class="big" id="doneTitle">Prête.</span>
     <div class="square frame dark">

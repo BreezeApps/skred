@@ -9,7 +9,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const DATA = process.argv[2] || 'D:/datasets/skred-eval';
+const DATA = process.argv[2] || 'D:/datasets/vesky-eval';
 const LABEL = process.argv[3] || 'site';
 const REEL = process.env.REEL || 'reel.json';   // autre fichier de référence, par exemple pour les vidéos de jour
 const ONLY_CHECKED = !process.env.TOUT;   // TOUT=1 : compte aussi les images pas encore corrigées (pré-repérage seul)
@@ -25,7 +25,7 @@ mkdirSync(join(here, '..', 'test', 'reel'), { recursive: true });
 for (const c of clips) if (!existsSync(join(here, '..', 'test', 'reel', c))) copyFileSync(join(DATA, 'reel', 'clips', c), join(here, '..', 'test', 'reel', c));
 
 const chrome = spawn(CHROME, [
-  '--headless=new', `--remote-debugging-port=${PORT}`, `--user-data-dir=${mkdtempSync(join(tmpdir(), 'skred-'))}`,
+  '--headless=new', `--remote-debugging-port=${PORT}`, `--user-data-dir=${mkdtempSync(join(tmpdir(), 'vesky-'))}`,
   '--autoplay-policy=no-user-gesture-required', '--window-size=420,900', '--no-first-run', 'about:blank',
 ], { stdio: 'ignore' });
 let page;
@@ -58,7 +58,7 @@ function coverage(f, masks) {
 
 const BANDS = [[0.03, 0.12], [0.12, 0.25], [0.25, 9]];
 // VARIANTES='{"nom": {"judge": {...}, "track": {...}, "rule": {...}}, ...}' : après une seule analyse par extrait, le tri des détections
-// et le suivi sont refaits avec chaque jeu de réglages (window.skred.rejudge) : mêmes détections pour toutes les variantes.
+// et le suivi sont refaits avec chaque jeu de réglages (window.vesky.rejudge) : mêmes détections pour toutes les variantes.
 const VARIANTS = process.env.VARIANTES ? JSON.parse(process.env.VARIANTES) : { [LABEL]: null };
 const acc = Object.fromEntries(Object.keys(VARIANTS).map((v) => [v, {
   total: BANDS.map(() => 0), missed: BANDS.map(() => 0), area: 0, carres: 0, off: 0, offBruit: 0, offHalo: 0, n: 0, perClip: {}, detail: [],
@@ -94,7 +94,7 @@ function areas(e, masks, noise) {
 for (const clip of clips) {
   await send('Page.navigate', { url: SITE });
   await sleep(1000);
-  await run(`while (!window.skred || document.getElementById('file').disabled) await new Promise(r => setTimeout(r, 100));`);
+  await run(`while (!window.vesky || document.getElementById('file').disabled) await new Promise(r => setTimeout(r, 100));`);
   await run(`const b = await (await fetch('test/reel/${clip}')).blob(); const dt = new DataTransfer(); dt.items.add(new File([b], '${clip}', { type: 'video/mp4' }));
     const inp = document.getElementById('file'); inp.files = dt.files; inp.dispatchEvent(new Event('change'));`);
   await run(`while (document.getElementById('s-review').hidden && document.getElementById('fatal').hidden) await new Promise(r => setTimeout(r, 200));`);
@@ -103,8 +103,8 @@ for (const clip of clips) {
   let line = clip.padEnd(45);
   for (const [name, params] of Object.entries(VARIANTS)) {
     // Chaque variante : { judge: {...}, track: {...} }, appliquée par-dessus les réglages d'origine du site.
-    if (params) await run(`window.skred.rejudge(${JSON.stringify({ confirm: 0.3, ...params.judge })}, ${JSON.stringify({ lowGrow: 1.5, hold: 4, unionMax: 4, ...params.track })}, ${JSON.stringify({ small: 0.2, ...params.rule })});`);
-    const got = await run(`const S = window.skred.S; const short = Math.min(S.W, S.H);
+    if (params) await run(`window.vesky.rejudge(${JSON.stringify({ confirm: 0.3, ...params.judge })}, ${JSON.stringify({ lowGrow: 1.5, hold: 4, unionMax: 4, ...params.track })}, ${JSON.stringify({ small: 0.2, ...params.rule })});`);
+    const got = await run(`const S = window.vesky.S; const short = Math.min(S.W, S.H);
       const tracks = S.tracks.map(t => { const d = [...t.dets.values()]; return { id: t.id, n: d.length, an: new Set(d.map(x => x.at)).size, w: Math.max(...d.map(x => x.w)) / short, s: Math.max(...d.map(x => x.s)), lo: d.filter(x => x.lo).length, sure: d.filter(x => x.sure).length, weak: d.filter(x => x.weak).length }; });
       return { tracks, W: S.W, H: S.H, masks: ${JSON.stringify(frames)}.map(i => (S.frames[i] || []).map(({ x, y, w, h, track }) => ({ x, y, w, h, t: track.id }))) };`);
     const A = acc[name];

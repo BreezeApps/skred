@@ -1,4 +1,4 @@
-# skred
+# vesky
 
 *[English version](README.en.md)*
 
@@ -27,19 +27,19 @@ peuvent être défaits par une IA. Un carré plein, non : il n'y a plus d'image 
 
 Pas besoin de nous croire sur parole : chacun de ces points se vérifie sans rien installer de spécial.
 
-- **App Android : aucune permission, pas même internet.** Dans les réglages du téléphone, Applications → skred →
+- **App Android : aucune permission, pas même internet.** Dans les réglages du téléphone, Applications → vesky →
   Autorisations : la liste est vide. Sans la permission internet, Android interdit lui-même à l'app d'envoyer quoi que ce soit.
   Le fichier qui le déclare : `android/app/src/main/AndroidManifest.xml`.
-- **Site : en mode avion.** Ouvre skred.fr une première fois avec du réseau, puis passe en mode avion et traite une vidéo :
+- **Site : en mode avion.** Ouvre vesky.fr une première fois avec du réseau, puis passe en mode avion et traite une vidéo :
   tout marche. Sans réseau, rien ne peut partir.
 - **Site : l'onglet Réseau du navigateur.** Sur ordinateur, ouvre les outils de développement (F12), onglet Réseau,
   puis traite une vidéo. Après le chargement de la page, aucune requête n'apparaît pendant l'analyse ni pendant l'export.
 - **Site : la politique de sécurité.** Chaque fichier du site est servi avec l'en-tête `Content-Security-Policy`
   (`_headers`), visible dans l'onglet Réseau. `connect-src 'self'` interdit au navigateur toute connexion vers un autre site.
-  skred.fr lui-même ne sert que des fichiers statiques : aucun code côté serveur ne pourrait recevoir une vidéo.
+  vesky.fr lui-même ne sert que des fichiers statiques : aucun code côté serveur ne pourrait recevoir une vidéo.
 - **Le test automatique** (voir « Tester ») échoue si une seule requête part après le chargement de la page.
 - **Le code est public.** Les envois réseau se cherchent en quelques secondes : `grep -rn "fetch(" app.js sw.js`.
-- **Le site sert ce code-là.** `bash outils/verifier-site.sh` télécharge chaque fichier de skred.fr et le compare,
+- **Le site sert ce code-là.** `bash outils/verifier-site.sh` télécharge chaque fichier de vesky.fr et le compare,
   à l'octet près, au dernier commit du dépôt (voir « Tester »).
 
 ## Comment c'est fait
@@ -63,14 +63,14 @@ Pas besoin de nous croire sur parole : chacun de ces points se vérifie sans rie
 
 - À la racine : le site lui-même (`index.html`, `app.js`, `style.css`…), avec `models/` (le modèle de détection),
   `vendor/` (bibliothèques et polices) et `icons/`.
-- `outils/` : construire le site publié, le servir en local, vérifier que skred.fr sert bien ce dépôt.
+- `outils/` : construire le site publié, le servir en local, vérifier que vesky.fr sert bien ce dépôt.
 - `test/` : les tests du site.
 - `entrainement/` : mesure et entraînement du modèle de détection.
 - `android/` et `fastlane/` : l'app Android et les textes de sa fiche.
 
 ## Mettre en ligne
 
-Adresse : https://skred.fr. Hébergé sur Cloudflare (Workers, fichiers statiques seulement, réglages dans `wrangler.jsonc`).
+Adresse : https://vesky.fr. Hébergé sur Cloudflare (Workers, fichiers statiques seulement, réglages dans `wrangler.jsonc`).
 
 Publier :
 
@@ -83,7 +83,7 @@ npx wrangler deploy
 
 Dossier `android/` : le site entier rangé dans une app, affiché par une WebView (`MainActivity.java`).
 L'app n'a aucune permission, pas même internet. Elle fait ce que le navigateur faisait seul : choisir un fichier,
-enregistrer le résultat dans la galerie (Films/skred, Images/skred), le partager, garder l'écran allumé, et ouvrir
+enregistrer le résultat dans la galerie (Films/vesky, Images/vesky), le partager, garder l'écran allumé, et ouvrir
 une vidéo partagée depuis la galerie. Les fichiers du site sont copiés dans l'app à chaque construction,
 d'après la même liste que `outils/build.mjs`. Textes de la fiche : `fastlane/metadata/android/`.
 
@@ -94,7 +94,7 @@ cd android && ./gradlew assembleRelease
 ```
 
 L'APK sort dans `android/app/build/outputs/apk/release/`. Il est signé seulement si le fichier décrivant la clé
-existe (`~/.skred-signature/keystore.properties`, ou le chemin donné par `SKRED_KEYSTORE`).
+existe (`~/.vesky-signature/keystore.properties`, ou le chemin donné par `VESKY_KEYSTORE`).
 La version de test (`assembleDebug`) embarque deux vidéos de `test/` et ouvre la page avec `?debug`,
 pour piloter l'app depuis l'ordinateur (`adb forward`, puis le même protocole que `test/run-test.mjs`).
 
@@ -141,7 +141,7 @@ bash test/verifier-tiers.sh
 
 Télécharge ONNX Runtime et Mediabunny depuis npm et vérifie que les fichiers du dépôt sont identiques aux
 originaux, à l'octet près. Seule retouche, refaite par le script : la ligne `sourceMappingURL` de `ort.wasm.min.mjs`
-est vidée. Le modèle, lui, a été réentraîné pour skred : sa recette est dans `entrainement/entrainer-nuit.sh`.
+est vidée. Le modèle, lui, a été réentraîné pour vesky : sa recette est dans `entrainement/entrainer-nuit.sh`.
 
 ### Le site en ligne
 
@@ -149,7 +149,7 @@ est vidée. Le modèle, lui, a été réentraîné pour skred : sa recette est d
 bash outils/verifier-site.sh
 ```
 
-Télécharge chaque fichier servi par skred.fr (la même liste que `outils/build.mjs`) et le compare, à l'octet près,
+Télécharge chaque fichier servi par vesky.fr (la même liste que `outils/build.mjs`) et le compare, à l'octet près,
 à sa version dans le dernier commit. Vérifie aussi que l'en-tête `Content-Security-Policy` reçu est celui de `_headers`.
 Autre adresse : `SITE=https://… bash outils/verifier-site.sh`.
 

@@ -1,7 +1,7 @@
-// Service worker : garde une copie des fichiers du site sur le téléphone, pour que skred marche sans réseau.
+// Service worker : garde une copie des fichiers du site sur le téléphone, pour que vesky marche sans réseau.
 // Avec du réseau, c'est toujours la version en ligne qui est servie (et la copie est mise à jour).
 // Sans réseau, c'est la copie. Aucune requête ne part vers un autre site.
-const CACHE = 'skred';
+const CACHE = 'vesky';
 const FILES = [
   './',
   'style.css',

@@ -1,4 +1,4 @@
-# Compare le détecteur de skred (YuNet, règle du site) à YOLOv5-face (https://github.com/deepcam-cn/yolov5-face),
+# Compare le détecteur de vesky (YuNet, règle du site) à YOLOv5-face (https://github.com/deepcam-cn/yolov5-face),
 # sur les mêmes banques de photos annotées que entrainement/eval-faces.py (WIDER FACE, DARK FACE).
 # Usage : python entrainement/eval-yolov5face.py <dossier des banques> <dossier du code yolov5-face> <poids .pt> <nom>
 # Le modèle tourne dans PyTorch, directement depuis le code du dépôt (même sortie qu'un ONNX, sans l'étape d'export) :
@@ -31,7 +31,7 @@ model = attempt_load(WEIGHTS, map_location='cpu').eval()
 
 
 def yolov5face(img):
-    """Même réduction de l'image que skred (plus grand côté 1920 au plus), bords complétés jusqu'à un multiple de 32."""
+    """Même réduction de l'image que vesky (plus grand côté 1920 au plus), bords complétés jusqu'à un multiple de 32."""
     h, w = img.shape[:2]
     s = min(1.0, ev.MAX_SIDE / max(w, h))
     dw, dh = max(1, round(w * s)), max(1, round(h * s))

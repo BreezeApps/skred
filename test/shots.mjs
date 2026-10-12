@@ -14,7 +14,7 @@ const out = new URL('./shots/', import.meta.url);
 mkdirSync(out, { recursive: true });
 
 const chrome = spawn(CHROME, [
-  '--headless=new', `--remote-debugging-port=${PORT}`, `--user-data-dir=${mkdtempSync(join(tmpdir(), 'skred-'))}`,
+  '--headless=new', `--remote-debugging-port=${PORT}`, `--user-data-dir=${mkdtempSync(join(tmpdir(), 'vesky-'))}`,
   '--autoplay-policy=no-user-gesture-required', '--window-size=1280,900', '--no-first-run', '--hide-scrollbars', 'about:blank',
 ], { stdio: 'ignore' });
 
@@ -57,7 +57,7 @@ for (const [tag, width, height, mobile] of [['m', 375, 812, true], ['d', 1280, 8
   await run(`const tm = document.getElementById('time'); tm.value = 5; tm.dispatchEvent(new Event('input')); await new Promise(r => setTimeout(r, 800));`);
   await shot(tag + '3-verification');
   // Sélection d'un masque automatique : premier visage de l'image affichée.
-  await run(`const S = window.skred.S; const b = (S.frames[window.skred.frameIndex(S.t)] || [])[0]; if (b) { S.sel = { track: b.track }; }
+  await run(`const S = window.vesky.S; const b = (S.frames[window.vesky.frameIndex(S.t)] || [])[0]; if (b) { S.sel = { track: b.track }; }
     const view = document.getElementById('view'); const r = view.getBoundingClientRect();
     view.dispatchEvent(new PointerEvent('pointerdown', { clientX: r.left + r.width / 2, clientY: r.top + r.height / 2, bubbles: true, pointerId: 1 }));
     view.dispatchEvent(new PointerEvent('pointerup', { clientX: r.left + r.width / 2, clientY: r.top + r.height / 2, bubbles: true, pointerId: 1 }));

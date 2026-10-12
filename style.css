@@ -360,7 +360,7 @@ button { font: inherit; color: inherit; }
 .legal a, .foot a { color: inherit; }
 .legal code { font: 500 13px/1.4 var(--mono); }
 
-/* Page « Vérifier skred » */
+/* Page « Vérifier vesky » */
 .verif { max-width: 640px; margin: 0 auto; padding: 18px 16px calc(40px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 28px; }
 .verif a { color: inherit; }
 .verif .brand { text-decoration: none; }

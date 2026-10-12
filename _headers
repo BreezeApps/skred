@@ -1,7 +1,7 @@
 # En-têtes envoyés par Cloudflare avec chaque fichier. Le serveur local (outils/dev-server.mjs) relit la politique de sécurité.
-# - Content-Security-Policy : le navigateur n'a le droit de se connecter qu'au site lui-même, et skred ne peut pas être
+# - Content-Security-Policy : le navigateur n'a le droit de se connecter qu'au site lui-même, et vesky ne peut pas être
 #   affiché dans un cadre sur un autre site (frame-ancestors, X-Frame-Options).
-# - Strict-Transport-Security : après une première visite, le navigateur n'utilise plus que HTTPS pour skred.fr.
+# - Strict-Transport-Security : après une première visite, le navigateur n'utilise plus que HTTPS pour vesky.fr.
 # - Permissions-Policy : ni caméra, ni micro, ni position, ni paiement ; seul le maintien de l'écran allumé reste permis.
 /*
   Content-Security-Policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' blob: data:; media-src 'self' blob:; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'

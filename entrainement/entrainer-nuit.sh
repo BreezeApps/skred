@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Entraînement du modèle de skred (models/yunet.onnx) : YuNet_n de libfacedetection.train, repris de ses poids publiés
+# Entraînement du modèle de vesky (models/yunet.onnx) : YuNet_n de libfacedetection.train, repris de ses poids publiés
 # et réentraîné sur WIDER FACE (jour) + DARK FACE (nuit, 5 000 photos ; 1 000 gardées à part pour la mesure).
 # Lancé sur un serveur avec carte graphique (une RTX louée, environ 2 h) :
 #   git clone https://github.com/ShiqiYu/libfacedetection.train.git /root/yt, avec une petite retouche de

@@ -1,12 +1,16 @@
-// skred : masque les visages d'une vidéo ou d'une photo, entièrement dans le navigateur.
+// vesky : masque les visages d'une vidéo ou d'une photo, entièrement dans le navigateur.
 // Aucune requête réseau après le chargement de la page (voir aussi la politique de sécurité dans _headers).
 import { createDetector, detectBoth, neededScore } from './detector.js';
 
 // Ouvert en http (certains navigateurs, comme Opera sur iPhone, ne passent pas tout seuls en https) : le navigateur
 // coupe alors la copie hors ligne, l'export rapide et d'autres fonctions. On repart aussitôt sur l'adresse en https.
-// www.skred.fr : même chose vers skred.fr, pour n'avoir qu'un seul site (une seule copie hors ligne, une seule app).
-if ((location.protocol === 'http:' && !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) || location.hostname === 'www.skred.fr') {
-  location.replace('https://' + location.host.replace(/^www\./, '') + location.pathname + location.search + location.hash);
+// www.vesky.fr : même chose vers vesky.fr, pour n'avoir qu'un seul site (une seule copie hors ligne, une seule app).
+// Ancienne adresse de l'outil : on repart sur vesky.fr. Ce site-ci y est servi pendant la transition pour que les
+// copies hors ligne déjà installées se mettent à jour et suivent (une redirection côté serveur les bloquerait).
+const OLD_HOST = /^(www\.)?skred\.fr$/.test(location.hostname);
+if (OLD_HOST || (location.protocol === 'http:' && !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) || location.hostname === 'www.vesky.fr') {
+  const host = OLD_HOST ? 'vesky.fr' : location.host.replace(/^www\./, '');
+  location.replace('https://' + host + location.pathname + location.search + location.hash);
 }
 
 const $ = (id) => document.getElementById(id);
@@ -142,9 +146,9 @@ function fail(el, msg) {
 /* ---------- App Android ---------- */
 
 // Dans l'app Android (dossier android/), la page tourne dans une WebView sans accès à internet.
-// L'app y place l'objet skredAndroid : la page lui confie ce que le navigateur faisait seul
+// L'app y place l'objet veskyAndroid : la page lui confie ce que le navigateur faisait seul
 // (enregistrer dans la galerie, partager, garder l'écran allumé, recevoir un fichier partagé).
-const ANDROID = window.skredAndroid || null;
+const ANDROID = window.veskyAndroid || null;
 let androidCaps = { ab: false };
 const androidWaiting = [];
 if (ANDROID) {
@@ -547,7 +551,7 @@ async function scan() {
     const t0 = performance.now();
     const always = isPhoto() || sent++ % LOW_EVERY === 0;   // compté par image envoyée, pas par numéro d'image
     tasks.push(runner.detect(bitmap, side, always).then((found) => {
-      if (DEBUG) S.found.push({ found: found.map((b) => ({ ...b })), i, j });   // pour window.skred.rejudge
+      if (DEBUG) S.found.push({ found: found.map((b) => ({ ...b })), i, j });   // pour window.vesky.rejudge
       const boxes = judge(found);
       for (const b of boxes) b.at = i;   // première image servie par cette analyse
       S.detectMs += performance.now() - t0;
@@ -1472,7 +1476,7 @@ if (ANDROID) {
   $('share').textContent = 'Partager';
   $('download').addEventListener('click', async (e) => {
     e.preventDefault();
-    const where = isPhoto() ? 'Images/skred' : 'Films/skred';
+    const where = isPhoto() ? 'Images/vesky' : 'Films/vesky';
     const r = await androidSend(S.resultFile, 'save');
     $('doneInfo').textContent = $('doneInfo').textContent.replace(/ (Enregistrée|Pas enregistrée).*$/, '')
       + (r === 'saved' ? ` Enregistrée dans ${where}.` : ' Pas enregistrée : réessaie avec le bouton.');
@@ -1619,7 +1623,7 @@ if (/iPhone|iPad|iPod/.test(navigator.userAgent) || (/Macintosh/.test(navigator.
 }
 
 // Accès aux données pour les tests : en local, ou avec ?debug (version de test de l'app Android).
-if (DEBUG) window.skred = {
+if (DEBUG) window.vesky = {
   S, frameIndex,
   retrack: (o) => { Object.assign(TRACK, o); buildTracks(S.raw); },
   // Refait le tri des détections gardées de l'analyse (S.found) avec d'autres réglages, puis le suivi.

@@ -10,7 +10,7 @@ import os
 import shutil
 import sys
 
-DATA = sys.argv[1] if len(sys.argv) > 1 else 'D:/datasets/skred-eval'
+DATA = sys.argv[1] if len(sys.argv) > 1 else 'D:/datasets/vesky-eval'
 here = os.path.dirname(os.path.abspath(__file__))
 ref = [e for e in json.load(open(os.path.join(DATA, 'reel', 'reel.json'))) if e['checked']]
 # Visages comptés par le banc vidéo pour chaque extrait (ceux d'au moins 3 % du petit côté).

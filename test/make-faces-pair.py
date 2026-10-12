@@ -1,5 +1,5 @@
 # Fabrique deux vidéos identiques au pixel près, sauf l'intérieur des visages (couleurs inversées dans la seconde).
-# Elles servent au test « sans trace » : skred doit produire exactement le même fichier pour les deux,
+# Elles servent au test « sans trace » : vesky doit produire exactement le même fichier pour les deux,
 # preuve que rien du visage d'origine ne passe dans le fichier masqué.
 # Même scène que make-test-video.py. Encodage sans perte (VP9), pour que seuls les visages diffèrent.
 # Zone inversée : 24-58 % de la largeur, 25-55 % de la hauteur de chaque photo collée (front, yeux, nez, bouche).
